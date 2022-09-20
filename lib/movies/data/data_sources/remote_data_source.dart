@@ -12,6 +12,7 @@ class RemoteDataSource implements BaseRemoteDataSource {
   @override
   Future<List<MoviesModel>> getPlayingNow()async {
 var response= await Dio().get("${AppConstant.baseUrl}/movie/now_playing?api_key=${AppConstant.apiKey}");
+
 if(response.statusCode==200)
   {
     return List<MoviesModel>.from((response.data["results"] as List).map((e) => MoviesModel.fromJson(e)));

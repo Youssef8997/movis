@@ -1,31 +1,108 @@
+import 'package:animate_do/animate_do.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:movis/movies/data/data_sources/remote_data_source.dart';
-import 'package:movis/movies/data/repositories/movies_repo_imp.dart';
-import 'package:movis/movies/domain/repositories/base_movies_repo.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:movis/movies/presentation/cuibt/movies_cubit.dart';
+import 'package:shimmer/shimmer.dart';
 
-import '../../domain/use_cases/now_playing_case.dart';
+import '../widgets/now_playing_widget.dart';
+import '../widgets/popular_widget.dart';
+import '../widgets/top_rated.dart';
 
-class MoviesScreen extends StatefulWidget {
+class MainMoviesScreen extends StatelessWidget {
+  const MainMoviesScreen({Key? key}) : super(key: key);
 
-  @override
-  _MoviesScreenState createState() => _MoviesScreenState();
-}
-
-class _MoviesScreenState extends State<MoviesScreen> {
-  @override
-  void initState() {
-  _getdata();
-    super.initState();
-  }
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
-  }
-}
+    return BlocProvider(
+      create: (context) => MoviesCubit()..getNowPlaying()..getPopular()..getTopRated(),
+        child: Scaffold(
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const NowPlaying(),
+                Container(
+                  margin: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Popular",
+                        style: GoogleFonts.poppins(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.15,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          /// TODO : NAVIGATION TO POPULAR SCREEN
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: const [
+                              Text('See More'),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                size: 16.0,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const PopularWidget(),
+                 Container(
+                margin: const EdgeInsets.fromLTRB(
+                  16.0,
+                  24.0,
+                  16.0,
+                  8.0,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Top Rated",
+                      style: GoogleFonts.poppins(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.15,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        /// TODO : NAVIGATION TO Top Rated Movies Screen
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: const [
+                            Text('See More'),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16.0,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+                const TopRated(),
+                const SizedBox(height: 50.0),
+              ],
+            ),
+          ),
+        )
 
-void _getdata() async {
-  BaseRemoteDataSource baseRemoteDataSource=RemoteDataSource();
-  BaseMoviesRepo baseMoviesRepo=MoviesRepoImpl(baseRemoteDataSource: baseRemoteDataSource);
-  final rasult=await GetNowPlaying(baseMoviesRepo: baseMoviesRepo).call();
-  print(rasult.isLeft());
+    );
+  }
 }

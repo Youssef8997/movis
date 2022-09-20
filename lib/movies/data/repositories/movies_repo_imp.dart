@@ -33,7 +33,7 @@ try{
 
   @override
   Future<Either<Failure,List<Movies>>> getTopRated() async {
-    final result=await baseRemoteDataSource.getTopRated();;
+    final result=await baseRemoteDataSource.getTopRated();
     try{
       return Right(result);
     }on ServerException catch(failure){
